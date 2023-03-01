@@ -23,7 +23,7 @@ async function startApplication() {
 
     // while (answers==="finish building the team"){};
     console.log("the middle");
-    let {name, id, email, officeNumber } = await inquirer.prompt([
+    let { name, id, email, officeNumber } = await inquirer.prompt([
         {
             type: 'input',
             name: 'name',
@@ -44,82 +44,79 @@ async function startApplication() {
             type: 'input',
             name: 'officeNumber',
             message: "Enter the team manager's office number:",
-          },
+        },
     ]);
     team.push(new Manager(name, id, email, officeNumber))
-    let htmlDoc = render(team)
-    await fs.writeFile(outputPath, htmlDoc)
-    
+
+
 
     let addMember = true;
 
-    if (addMember){
+    while (addMember) {
+        let memberQuestion = await inquirer.prompt({
 
-    }
-    // let { member, name, id, email, github, school, officeNumber } = await inquirer
-    //     .prompt([
-
-           
-           
-    //         {
-    //             type: 'list',
-    //             name: 'member',
-    //             message: "What type of role you adding?",
-    //             choices: ["Engineer", "Intern", "finish building the team"],
-
-    //         },
-    //         {
-    //             type: 'input',
-    //             name: 'name',
-    //             message: "what is the engineers name ? ",
-    //             when(answers) {
-    //                 return answers.member === "Engineer"
-    //             }
-    //         },
-    //         {
-    //             type: 'input',
-    //             name: 'github',
-    //             message: "what is the engineers github ? ",
-    //             when(answers) {
-    //                 return answers.member === "Engineer"
-    //             }
-    //         },
-
-
-    //         // when : input => {
-
-    //         // }
+            type: 'list',
+            name: 'member',
+            message: "What type of role you adding?",
+            choices: ["Engineer", "Intern", "finish building the team"],
 
 
 
+        });
+        console.log(memberQuestion.member);
+        if (memberQuestion.member === "finish building the team") {
+            addMember = false;
+            continue;
 
-    // ]);
+
+        }
+        let memberAnswers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'name',
+                message: `what is the ${memberQuestion.member} name ?`,
+
+            },
+            {
+                type: 'input',
+                name: 'id',
+                message: `what is the ${memberQuestion.member} id ?`,
+            },
+            {
+                name: 'email',
+                message: `what is the ${memberQuestion.member} email ? `,
+                type: 'input',
+            },
+                ...(memberQuestion.member === 'Engineer'
+            ? [
+              {
+                type: 'input',
+                name: 'github',
+                message: `Enter the ${memberQuestion.member}'s GitHub username:`,
+              },
+            ]
+            : [
+              {
+                type: 'input',
+                name: 'school',
+                message: `Enter the ${memberQuestion.member}'s school:`,
+              },
+            ]),
 
 
-    // team.push(new Manager(name, id, email, officeNumber))
-    // let htmlDoc = render(team)
-    // await fs.writeFile(outputPath, htmlDoc)
+        ]);
 
-   
+        
+
+        if (memberQuestion.member === "Engineer") {
+            team.push(new Engineer(memberAnswers.name, memberAnswers.id, memberAnswers.email, memberAnswers.github))
+        } else {
+            team.push(new Intern(memberAnswers.name, memberAnswers.id, memberAnswers.email, memberAnswers.school))
+        }
+    };
+    
+
+    let htmlDoc = render(team)
+    await fs.writeFile(outputPath, htmlDoc)
 };
 
-async function employeeQuestions() {
-    // let setQuestions = await inquirer.prompt([
-    //     {
-    //         type: 'input',
-    //         name: 'name',
-    //         message: "what is the managers name ?",
-
-    //     },
-    //     {
-    //         type: 'input',
-    //         name: 'id',
-    //         message: "what is the managers id ?",
-    //     },
-    //     {
-    //         name: 'email',
-    //         message: "what is the managers email ? ",
-    //         type: 'input',
-    //     },
-    // ])
-}
